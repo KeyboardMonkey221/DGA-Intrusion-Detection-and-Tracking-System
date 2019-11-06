@@ -45,11 +45,17 @@ func main() {
 	// Get the channel with packets
 	incomingPacketChannel := getPacketsChannelFromHandle(pcapHandle)
 
-	counter := 0
+	counter := 1
+	xTime := time.Now()
 	var totalTimeTaken time.Duration = 0
 	for packet := range incomingPacketChannel {
-		if counter%100 == 0 {
-			fmt.Println("Heartbeat: Parsed 100 packets...")
+		if counter%1000000 == 0 {
+			fmt.Println("Heartbeat: Parsed 1 000 000 packets...")
+			timeTakenForPackets := time.Now().Sub(xTime)
+			fmt.Println("Took: ", timeTakenForPackets)
+			averagex := timeTakenForPackets.Seconds() / float64(1000000)
+			fmt.Printf("Average time per packet: %.10f seconds\n", averagex)
+			xTime = time.Now()
 		}
 
 		startTime := time.Now()

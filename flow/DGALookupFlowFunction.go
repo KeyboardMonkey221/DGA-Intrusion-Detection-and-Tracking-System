@@ -61,7 +61,6 @@ func DGALookupOnDNSResponsesFlowFunction(packet gopacket.Packet) {
 }
 
 func handleStandardResponse(dnsData *layers.DNS) {
-	fmt.Println("--> DNS Response found...")
 	// Cycle through all the domainNames questioned, checking for DGA domain names using in-mem db
 	for _, DNSquestion := range dnsData.Questions {
 		domainName := string(DNSquestion.Name)
@@ -69,12 +68,14 @@ func handleStandardResponse(dnsData *layers.DNS) {
 		// in-mem lookup w/ redis
 		returnVal := DGARedisClient.Get(domainName)
 		if returnVal.Err() != redis.Nil {
+			fmt.Println("Malware Found: ", domainName)
 			for _, answer := range dnsData.Answers {
 				// Note: These DGA shouldn't have multiple IP address, but unclear
 				// Should block
 				addIPToTrace(answer.IP.String())
 			}
 		} else {
+			/*
 			fmt.Println("- Lookup failed, but use anyway for the sake of testing")
 			for _, answer := range dnsData.Answers {
 				if answer.IP == nil {
@@ -83,6 +84,7 @@ func handleStandardResponse(dnsData *layers.DNS) {
 
 				addIPToTrace(answer.IP.String())
 			}
+			*/
 		}
 	}
 }
