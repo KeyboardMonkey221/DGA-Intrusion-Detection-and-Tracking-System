@@ -1,14 +1,6 @@
 package main
 
-<<<<<<< HEAD
-import (
-	"fmt"
-
-	"github.com/google/gopacket"
-)
-=======
 import "github.com/google/gopacket"
->>>>>>> 2f758f6ac37b6ecf3a9ac9647b4cc9910f45c5ad
 
 // Could implement a tree like structure later on for speed
 // A packet being parsed successfully by one function probably mean
@@ -17,10 +9,7 @@ type packetFlowFunction func(gopacket.Packet)
 
 // This global slice stores all of the functions (* func) that will be called
 // on incoming packets and direct flow to their respective channels
-<<<<<<< HEAD
 // Future development: should implement a tree - if one check passes, then maybe you don't need check something else further down the stage
-=======
->>>>>>> 2f758f6ac37b6ecf3a9ac9647b4cc9910f45c5ad
 var packetFlowFunctions [](packetFlowFunction)
 
 // Given a channel of gopacket.Packet, apply various functions that will parse packets
@@ -28,10 +17,6 @@ var packetFlowFunctions [](packetFlowFunction)
 // All functions should take COPIES of the packet, never the source (other functions may need it)
 // Intended to be used in multiple goroutines (as a worker)
 func parsePacketsWorker(incomingPackets <-chan gopacket.Packet) {
-<<<<<<< HEAD
-	fmt.Println("Parse a packet")
-=======
->>>>>>> 2f758f6ac37b6ecf3a9ac9647b4cc9910f45c5ad
 	for packet := range incomingPackets {
 		// attempt all the flow functions
 		for _, flowFunction := range packetFlowFunctions {
