@@ -8,6 +8,9 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"runtime/debug"
+	"sync"
+	"time"
 
 	"github.com/hashicorp/go-memdb"
 )
@@ -17,17 +20,25 @@ type DGARow struct {
 	MalwareFamily string
 }
 
-const targetDir = "./test_data"
+// add a % of data read
+// Add workers
 
-var DGA_db *memdb.MemDB
+const targetDir = "./2019-01-07-dgarchive_full"
+
+var counter int
+
+var DGADatabase *memdb.MemDB
+var tableName string
+var startTime time.Time
 
 func initDGADatabase() {
-	var tableName string = "DGA_Table"
+	debug.SetGCPercent(-1)
+	tableName = "DGA_Table"
 	schema := getDGASchema(tableName)
 
 	fmt.Println("Creating in-memory db...")
 	var err error
-	DGA_db, err = memdb.NewMemDB(schema)
+	DGADatabase, err = memdb.NewMemDB(schema)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,13 +49,50 @@ func initDGADatabase() {
 		log.Fatal(err)
 	}
 
-	// Cycle through files in directory extracting data and inserting in the db
-	for _, file := range files {
+	// Create a channel to buffer files to be inserted into db
+	filesChannel := make(chan os.FileInfo, 100)
+	// Create a waitgroup to wait for the database to be completely created
+	var wgDB sync.WaitGroup
+
+	// Goroutine to add files to the channel
+	go func() {
+		for _, file := range files {
+			fmt.Println("Added file: ", file.Name())
+			filesChannel <- file
+		}
+
+		// After all files have been added, close the channel
+		// to indicate no further files are to be added
+		close(filesChannel)
+	}()
+
+	// Create workers to pull files to begin parsing into the db
+	var totalWorkers int = 1
+	counter = 0
+	for i := 0; i < totalWorkers; i++ {
+		wgDB.Add(1)
+		fmt.Println("Create dbworker, ", i)
+		startTime = time.Now()
+		dataBaseWorker(filesChannel, &wgDB)
+	}
+
+	// Wait till all workers have completed parsing
+	wgDB.Wait()
+}
+
+func dataBaseWorker(channel <-chan os.FileInfo, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for file := range channel {
+		rowsCommitted := 0
+		start := time.Now()
+		// fmt.Println("Parsing file: ", file.Name(), "| time start: ", start)
 		// regex for .csv files
 		matched, _ := regexp.MatchString(".csv", file.Name())
 		if !matched {
 			continue
 		}
+
+		fmt.Println("Opening ", file.Name(), "...")
 
 		// Open csv files and assign a reader
 		filePath := targetDir + "/" + file.Name()
@@ -52,7 +100,7 @@ func initDGADatabase() {
 		reader := csv.NewReader(csvFile)
 
 		// Ready a write transaction for db
-		writeTransaction := DGA_db.Txn(true)
+		writeTransaction := DGADatabase.Txn(true)
 
 		// fmt.Println("Reading from: ", filePath) -> can make logs later
 		for {
@@ -67,15 +115,25 @@ func initDGADatabase() {
 			// insert into the db via the writeTransaction already open
 
 			err = writeTransaction.Insert(tableName, DGARow{domainNameData, malwareFamilyData})
+			counter++
+			if counter > 100000 {
+				fmt.Println("heartbeat...", time.Now().Sub(startTime))
+				counter = 0
+			}
 			if err != nil {
 				log.Fatal(err)
 			}
+			rowsCommitted++
 		}
 
 		// Commit the transaction for this file
+		startCommit := time.Now()
 		writeTransaction.Commit()
+		end := time.Now()
+		fmt.Println("**", end.Sub(startTime), "** Commitment made for file: ", file.Name())
+		fmt.Println("Total TimeLapsed: ", end.Sub(start), "| Rows committed: ", rowsCommitted)
+		fmt.Println("Commit time: ", end.Sub(startCommit))
 	}
-
 }
 
 // Return the DBschema of the DGA lookup

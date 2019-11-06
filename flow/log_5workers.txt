@@ -1,0 +1,335 @@
+** Opening the pcap handle...
+Offline parsing initiating...
+Reading from: test.pcap
+Opening the pcap handle was successful!
+** Intialising starting flow functions...
+# Initialising flow function DGALookup
+Creating in-memory db...
+Reading data from:  ./2019-01-07-dgarchive_full
+Create dbworker,  0
+Added file:  .DS_Store
+Added file:  bamital_dga.csv
+Added file:  banjori_dga.csv
+Added file:  bedep_dga.csv
+Added file:  beebone_dga.csv
+Added file:  blackhole_dga.csv
+Added file:  bobax_dga.csv
+Added file:  ccleaner_dga.csv
+Added file:  chinad_dga.csv
+Added file:  chir_dga.csv
+Added file:  corebot_dga.csv
+Added file:  darkshell_dga.csv
+Added file:  diamondfox_dga.csv
+Added file:  dircrypt_dga.csv
+Added file:  dnsbenchmark_dga.csv
+Added file:  dnschanger_dga.csv
+Added file:  downloader_dga.csv
+Added file:  ebury_dga.csv
+Added file:  ekforward_dga.csv
+Added file:  emotet_dga.csv
+Added file:  feodo_dga.csv
+Added file:  fobber_dga.csv
+Added file:  gameover_p2p.csv
+Added file:  gozi_dga.csv
+Added file:  goznym_dga.csv
+Added file:  gspy_dga.csv
+Added file:  hesperbot_dga.csv
+Added file:  infy_dga.csv
+Added file:  locky_dga.csv
+Added file:  madmax_dga.csv
+Added file:  makloader_dga.csv
+Opening  bamital_dga.csv ...
+Added file:  matsnu_dga.csv
+Added file:  mirai_dga.csv
+Added file:  modpack_dga.csv
+Added file:  murofetweekly_dga.csv
+Added file:  nymaim2_dga.csv
+Added file:  nymaim_dga.csv
+Added file:  oderoor_dga.csv
+Added file:  omexo_dga.csv
+Added file:  padcrypt_dga.csv
+Added file:  pandabanker_dga.csv
+Added file:  proslikefan_dga.csv
+Added file:  pushdo_dga.csv
+Added file:  pushdotid_dga.csv
+Added file:  qadars_dga.csv
+Added file:  qhost_dga.csv
+Added file:  ramdo_dga.csv
+Added file:  ramnit_dga.csv
+Added file:  ranbyus_dga.csv
+Added file:  randomloader_dga.csv
+Added file:  redyms_dga.csv
+Added file:  rovnix_dga.csv
+Added file:  shifu_dga.csv
+Added file:  simda_dga.csv
+Added file:  sisron_dga.csv
+Added file:  sphinx_dga.csv
+Added file:  suppobox_dga.csv
+Added file:  sutra_dga.csv
+Added file:  symmi_dga.csv
+Added file:  szribi_dga.csv
+Added file:  tempedreve_dga.csv
+Added file:  tempedrevetdd_dga.csv
+Added file:  tinba_dga.csv
+Added file:  tinynuke_dga.csv
+Added file:  tofsee_dga.csv
+Added file:  torpig_dga.csv
+Added file:  tsifiri_dga.csv
+Added file:  ud2_dga.csv
+Added file:  ud3_dga.csv
+Added file:  ud4_dga.csv
+Added file:  urlzone_dga.csv
+Added file:  vawtrak_dga.csv
+Added file:  vidro_dga.csv
+Added file:  vidrotid_dga.csv
+Added file:  volatilecedar_dga.csv
+Added file:  wd_dga.csv
+Added file:  xshellghost_dga.csv
+Added file:  xxhex_dga.csv
+heartbeat... 802.940931ms
+heartbeat... 1.669513226s
+heartbeat... 2.616260805s
+** 2.704229929s ** Commitment made for file:  bamital_dga.csv
+Total TimeLapsed:  2.704021277s | Rows committed:  309296
+Commit time:  8.149µs
+Opening  banjori_dga.csv ...
+heartbeat... 3.342774158s
+heartbeat... 4.158593884s
+heartbeat... 5.077023724s
+heartbeat... 6.003076201s
+** 7.105804238s ** Commitment made for file:  banjori_dga.csv
+Total TimeLapsed:  4.40152162s | Rows committed:  452235
+Commit time:  493.719028ms
+Opening  bedep_dga.csv ...
+** 8.253437507s ** Commitment made for file:  bedep_dga.csv
+Total TimeLapsed:  1.14758721s | Rows committed:  36466
+Commit time:  933.119543ms
+Opening  beebone_dga.csv ...
+** 8.256804846s ** Commitment made for file:  beebone_dga.csv
+Total TimeLapsed:  3.311855ms | Rows committed:  210
+Commit time:  20.1µs
+Opening  blackhole_dga.csv ...
+heartbeat... 8.281848968s
+** 8.315683783s ** Commitment made for file:  blackhole_dga.csv
+Total TimeLapsed:  58.8418ms | Rows committed:  5114
+Commit time:  1.084035ms
+Opening  bobax_dga.csv ...
+** 8.319517637s ** Commitment made for file:  bobax_dga.csv
+Total TimeLapsed:  3.794281ms | Rows committed:  300
+Commit time:  121.8µs
+Opening  ccleaner_dga.csv ...
+** 8.320022434s ** Commitment made for file:  ccleaner_dga.csv
+Total TimeLapsed:  472.57µs | Rows committed:  26
+Commit time:  15.928µs
+Opening  chinad_dga.csv ...
+heartbeat... 9.1132073s
+heartbeat... 10.045069491s
+heartbeat... 11.028129687s
+heartbeat... 12.07999686s
+heartbeat... 13.172942533s
+heartbeat... 14.405968576s
+** 16.828578479s ** Commitment made for file:  chinad_dga.csv
+Total TimeLapsed:  8.508536733s | Rows committed:  654848
+Commit time:  1.596560824s
+Opening  chir_dga.csv ...
+** 16.833826097s ** Commitment made for file:  chir_dga.csv
+Total TimeLapsed:  5.186961ms | Rows committed:  100
+Commit time:  290.257µs
+Opening  corebot_dga.csv ...
+heartbeat... 17.211240408s
+heartbeat... 18.175843873s
+heartbeat... 19.38855694s
+heartbeat... 20.559359889s
+heartbeat... 21.676225343s
+heartbeat... 22.726734776s
+** 25.948196369s ** Commitment made for file:  corebot_dga.csv
+Total TimeLapsed:  9.114333109s | Rows committed:  569790
+Commit time:  2.881421359s
+Opening  darkshell_dga.csv ...
+** 25.950317086s ** Commitment made for file:  darkshell_dga.csv
+Total TimeLapsed:  2.042705ms | Rows committed:  49
+Commit time:  741.879µs
+Opening  diamondfox_dga.csv ...
+** 28.242491037s ** Commitment made for file:  diamondfox_dga.csv
+Total TimeLapsed:  2.29211244s | Rows committed:  10970
+Commit time:  2.19293293s
+Opening  dircrypt_dga.csv ...
+** 28.35727073s ** Commitment made for file:  dircrypt_dga.csv
+Total TimeLapsed:  114.734361ms | Rows committed:  690
+Commit time:  95.686572ms
+Opening  dnsbenchmark_dga.csv ...
+** 28.357775619s ** Commitment made for file:  dnsbenchmark_dga.csv
+Total TimeLapsed:  459.574µs | Rows committed:  5
+Commit time:  54.993µs
+Opening  dnschanger_dga.csv ...
+heartbeat... 29.145740868s
+heartbeat... 30.423380636s
+heartbeat... 31.673945458s
+heartbeat... 32.897279225s
+heartbeat... 34.160098798s
+heartbeat... 35.448839069s
+heartbeat... 36.893657673s
+heartbeat... 38.853038327s
+heartbeat... 40.333027826s
+heartbeat... 41.734434046s
+heartbeat... 43.165468877s
+heartbeat... 44.59443723s
+heartbeat... 46.013774814s
+heartbeat... 47.504489496s
+heartbeat... 48.965564355s
+** 1m3.493381997s ** Commitment made for file:  dnschanger_dga.csv
+Total TimeLapsed:  35.13557682s | Rows committed:  1500000
+Commit time:  13.952795114s
+Opening  downloader_dga.csv ...
+** 1m3.509540136s ** Commitment made for file:  downloader_dga.csv
+Total TimeLapsed:  15.99806ms | Rows committed:  120
+Commit time:  7.990218ms
+Opening  ebury_dga.csv ...
+** 1m3.645402959s ** Commitment made for file:  ebury_dga.csv
+Total TimeLapsed:  135.676739ms | Rows committed:  2000
+Commit time:  75.746496ms
+Opening  ekforward_dga.csv ...
+** 1m4.080457417s ** Commitment made for file:  ekforward_dga.csv
+Total TimeLapsed:  434.969243ms | Rows committed:  2920
+Commit time:  364.964759ms
+Opening  emotet_dga.csv ...
+heartbeat... 1m5.501190371s
+heartbeat... 1m7.799320424s
+heartbeat... 1m9.8920811s
+** 1m36.408220467s ** Commitment made for file:  emotet_dga.csv
+Total TimeLapsed:  32.327679009s | Rows committed:  321600
+Commit time:  25.226094635s
+Opening  feodo_dga.csv ...
+** 1m36.44961439s ** Commitment made for file:  feodo_dga.csv
+Total TimeLapsed:  41.16194ms | Rows committed:  192
+Commit time:  14.499658ms
+Opening  fobber_dga.csv ...
+** 1m36.702613302s ** Commitment made for file:  fobber_dga.csv
+Total TimeLapsed:  252.91892ms | Rows committed:  2000
+Commit time:  50.588984ms
+Opening  gameover_p2p.csv ...
+heartbeat... 1m37.494364563s
+heartbeat... 1m39.678993124s
+heartbeat... 1m42.029582167s
+heartbeat... 1m44.375064705s
+heartbeat... 1m46.631334629s
+heartbeat... 1m48.850652313s
+** 3m11.592223734s ** Commitment made for file:  gameover_p2p.csv
+Total TimeLapsed:  1m34.889557561s | Rows committed:  542000
+Commit time:  1m22.49066614s
+Opening  gozi_dga.csv ...
+heartbeat... 3m14.777523323s
+heartbeat... 3m16.637931787s
+** 4m13.936654615s ** Commitment made for file:  gozi_dga.csv
+Total TimeLapsed:  1m2.344209191s | Rows committed:  216355
+Commit time:  56.781947824s
+Opening  goznym_dga.csv ...
+** 4m14.29227111s ** Commitment made for file:  goznym_dga.csv
+Total TimeLapsed:  355.380098ms | Rows committed:  364
+Commit time:  322.895278ms
+Opening  gspy_dga.csv ...
+** 4m14.391146154s ** Commitment made for file:  gspy_dga.csv
+Total TimeLapsed:  98.822827ms | Rows committed:  49
+Commit time:  93.125428ms
+Opening  hesperbot_dga.csv ...
+** 4m14.533630256s ** Commitment made for file:  hesperbot_dga.csv
+Total TimeLapsed:  142.283108ms | Rows committed:  178
+Commit time:  133.112291ms
+Opening  infy_dga.csv ...
+** 4m47.362484234s ** Commitment made for file:  infy_dga.csv
+Total TimeLapsed:  32.828807731s | Rows committed:  12720
+Commit time:  32.551137028s
+Opening  locky_dga.csv ...
+heartbeat... 4m48.512976397s
+heartbeat... 4m49.989001967s
+heartbeat... 4m51.514325482s
+heartbeat... 4m53.184346405s
+heartbeat... 4m54.753758032s
+heartbeat... 4m56.37897874s
+heartbeat... 4m58.019721777s
+heartbeat... 4m59.728516167s
+heartbeat... 5m1.470457367s
+heartbeat... 5m3.221241391s
+heartbeat... 5m5.871701261s
+heartbeat... 5m7.88296889s
+heartbeat... 5m10.257207751s
+heartbeat... 5m12.671578479s
+heartbeat... 5m15.316142111s
+heartbeat... 5m18.21328002s
+** 11m23.260474794s ** Commitment made for file:  locky_dga.csv
+Total TimeLapsed:  6m35.896800174s | Rows committed:  1655024
+Commit time:  6m1.972144748s
+Opening  madmax_dga.csv ...
+** 11m23.650070619s ** Commitment made for file:  madmax_dga.csv
+Total TimeLapsed:  382.58023ms | Rows committed:  388
+Commit time:  280.050564ms
+Opening  makloader_dga.csv ...
+** 11m23.966659964s ** Commitment made for file:  makloader_dga.csv
+Total TimeLapsed:  316.471929ms | Rows committed:  512
+Commit time:  271.729591ms
+Opening  matsnu_dga.csv ...
+heartbeat... 11m24.086892093s
+heartbeat... 11m25.389360934s
+** 13m26.158211412s ** Commitment made for file:  matsnu_dga.csv
+Total TimeLapsed:  2m2.191351606s | Rows committed:  117401
+Commit time:  2m0.591036381s
+Opening  mirai_dga.csv ...
+** 13m26.837808814s ** Commitment made for file:  mirai_dga.csv
+Total TimeLapsed:  623.172867ms | Rows committed:  980
+Commit time:  253.026051ms
+Opening  modpack_dga.csv ...
+** 13m27.049150217s ** Commitment made for file:  modpack_dga.csv
+Total TimeLapsed:  211.22138ms | Rows committed:  320
+Commit time:  150.691801ms
+Opening  murofetweekly_dga.csv ...
+heartbeat... 13m29.478337126s
+heartbeat... 13m31.663452444s
+heartbeat... 13m33.641442405s
+heartbeat... 13m37.534552239s
+heartbeat... 13m40.827721881s
+** 19m38.157067224s ** Commitment made for file:  murofetweekly_dga.csv
+Total TimeLapsed:  6m11.107852783s | Rows committed:  542000
+Commit time:  5m55.090578462s
+Opening  nymaim2_dga.csv ...
+** 22m35.095817925s ** Commitment made for file:  nymaim2_dga.csv
+Total TimeLapsed:  2m56.919442031s | Rows committed:  23424
+Commit time:  2m55.815311046s
+Opening  nymaim_dga.csv ...
+heartbeat... 22m36.017165809s
+heartbeat... 22m37.862993982s
+heartbeat... 22m40.427017718s
+heartbeat... 22m43.078654533s
+heartbeat... 22m45.642523031s
+heartbeat... 22m50.208207359s
+heartbeat... 22m54.008979875s
+heartbeat... 22m57.380792417s
+heartbeat... 23m0.795988423s
+heartbeat... 23m4.619389706s
+** 40m37.675512625s ** Commitment made for file:  nymaim_dga.csv
+Total TimeLapsed:  18m2.569518312s | Rows committed:  1018084
+Commit time:  17m29.199929457s
+Opening  oderoor_dga.csv ...
+heartbeat... 40m40.91324601s
+heartbeat... 40m43.000324068s
+heartbeat... 40m47.284020033s
+heartbeat... 40m51.401424875s
+** 47m8.699425978s ** Commitment made for file:  oderoor_dga.csv
+Total TimeLapsed:  6m30.98020283s | Rows committed:  326968
+Commit time:  6m12.910425209s
+Opening  omexo_dga.csv ...
+** 47m8.917823421s ** Commitment made for file:  omexo_dga.csv
+Total TimeLapsed:  204.096595ms | Rows committed:  20
+Commit time:  81.253235ms
+Opening  padcrypt_dga.csv ...
+heartbeat... 47m13.465239539s
+heartbeat... 47m15.935812227s
+** 53m3.003221293s ** Commitment made for file:  padcrypt_dga.csv
+Total TimeLapsed:  5m54.085343758s | Rows committed:  184296
+Commit time:  5m46.843671584s
+Opening  pandabanker_dga.csv ...
+** 57m6.433993148s ** Commitment made for file:  pandabanker_dga.csv
+Total TimeLapsed:  4m3.422682046s | Rows committed:  21940
+Commit time:  4m2.569723243s
+Opening  proslikefan_dga.csv ...
+heartbeat... 57m9.615006561s
+heartbeat... 57m14.676438581s
