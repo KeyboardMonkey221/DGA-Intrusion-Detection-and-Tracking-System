@@ -1,0 +1,3 @@
+# This is a TOML Config File
+[nats]
+nats_url = "nats://nozzle-analytics.sdn.unsw.edu.au:4222"

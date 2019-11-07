@@ -1,0 +1,84 @@
+syntax = "proto3";
+package main;
+
+message DnsHeaderFlags {
+    bool authoritative_answer = 1;
+    bool truncated_response = 2;
+    bool recursion_desired = 3;
+    bool recursion_available = 4;
+    uint32 z = 5;
+}
+
+message DnsHeader {
+    uint32 dns_tx_id = 1;
+    bool is_response = 2;
+    uint32 op_code = 3;
+    DnsHeaderFlags flags = 4;
+    uint32 response_code = 5;
+    uint32 question_count = 6;
+    uint32 answer_count = 7;
+    uint32 authority_count = 8;
+    uint32 additional_count = 9;
+}
+
+message Question {
+    bytes name = 1;
+    string type = 2;
+    string class = 3;
+}
+
+message ResourceRecord {
+    bytes name = 1;
+    string type = 2;
+    string class = 3;
+    uint32 ttl = 4;
+    string string_data = 5;
+    bytes byte_data = 6;
+    StartOfAuthority soa = 7;
+    MailExchange mx = 8;
+    ServiceRecord srv = 9;
+}
+
+message DnsInfo {
+  DnsHeader header = 1;
+  repeated Question questions = 2;
+  repeated ResourceRecord answers = 3;
+  repeated ResourceRecord authorities = 4;
+  repeated ResourceRecord additionals = 5;
+}
+
+message DnsPacket {
+    int64 timestamp = 1;
+    bool is_inbound = 2;
+    uint32 eth_type = 3;
+    string src_ip = 4;
+    string dst_ip = 5;
+    uint32 packet_bytes = 6;
+    DnsInfo dns_info = 7;
+}
+
+message DnsPacketBundle {
+    repeated DnsPacket packets = 1;
+}
+
+message StartOfAuthority {
+    bytes m_name = 1;
+    bytes r_name = 2;
+    uint32 serial = 3;
+    uint32 refresh = 4;
+    uint32 retry = 5;
+    uint32 expire = 6;
+    uint32 minimum = 7;
+}
+
+message MailExchange {
+    bytes name = 1;
+    uint32 preference = 2;
+}
+
+message ServiceRecord {
+    bytes name = 1;
+    uint32 priority = 2;
+    uint32 weight = 3;
+    uint32 port = 4;
+}
