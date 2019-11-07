@@ -51,7 +51,7 @@ func main() {
 		fmt.Println("* Created worker...")
 		go func() {
 			for p := range DNSPacketChannelFromNATS {
-				fmt.Println("GOT DNS PACKET")
+				fmt.Println(p)
 			}
 		}()
 	} else {
