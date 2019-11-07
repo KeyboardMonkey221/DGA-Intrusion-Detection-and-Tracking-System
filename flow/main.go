@@ -31,6 +31,10 @@ func init() {
 
 func main() {
 	flag.Parse()
+
+	NATSSwitch = "on"
+	networkDeviceInterfaceName = "ens192"
+
 	conf = GetConfig()
 	fmt.Println("########### INITIATING FLOW ############")
 
@@ -127,8 +131,6 @@ func getpcapHandle() *pcap.Handle {
 		fmt.Println("** Pcap file:", pcapFilePath)
 		myHandle, err = pcap.OpenOffline(pcapFilePath)
 	} else {
-		fmt.Println(networkDeviceInterfaceName)
-
 		log.Fatal("Please provide an interface or pcap file")
 	}
 
