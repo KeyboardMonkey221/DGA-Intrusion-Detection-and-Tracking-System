@@ -76,14 +76,14 @@ func handleStandardResponse(dnsData *layers.DNS) {
 			}
 		} else {
 			/*
-			fmt.Println("- Lookup failed, but use anyway for the sake of testing")
-			for _, answer := range dnsData.Answers {
-				if answer.IP == nil {
-					continue
-				}
+				fmt.Println("- Lookup failed, but use anyway for the sake of testing")
+				for _, answer := range dnsData.Answers {
+					if answer.IP == nil {
+						continue
+					}
 
-				addIPToTrace(answer.IP.String())
-			}
+					addIPToTrace(answer.IP.String())
+				}
 			*/
 		}
 	}
