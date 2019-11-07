@@ -1,8 +1,9 @@
 package main
 
-import "flag"
 import (
+	"flag"
 	"fmt"
+
 	"github.com/BurntSushi/toml"
 )
 
