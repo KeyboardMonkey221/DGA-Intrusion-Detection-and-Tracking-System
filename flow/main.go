@@ -31,10 +31,6 @@ func init() {
 
 func main() {
 	flag.Parse()
-
-	NATSSwitch = "on"
-	networkDeviceInterfaceName = "ens192"
-
 	conf = GetConfig()
 	fmt.Println("########### INITIATING FLOW ############")
 
