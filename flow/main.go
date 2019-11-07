@@ -16,19 +16,33 @@ var clientMACAddress string
 var networkDeviceInterfaceName string
 var incomingPacketChannelSize int
 var globalWaitGroup sync.WaitGroup
+var conf FlowConfig
+var dnsPacketChannel chan DnsPacket
 
 func init() {
 	flag.StringVar(&pcapFilePath, "f", "no.pcap", "For offline parsing, provide filepath to .pcap file to be parsed")
 	flag.StringVar(&clientMACAddress, "MAC", "", "For offline parsing, provide the Client MAC address to distinguish client->server flow")
 	flag.StringVar(&networkDeviceInterfaceName, "i", "no.interface", "For online parsing (has priority over offline), provide the Network Device Interface's name")
-
+	flag.String("config", "flow.toml", "Configuration file")
 	incomingPacketChannelSize = 10000
 }
 
 func main() {
 	flag.Parse()
+	conf = GetConfig()
+	dnsPacketChannel = make(chan DnsPacket, 10000)
 
 	fmt.Println("########### INITIATING ############")
+
+	fmt.Println("** Intialising DNS Packet NATS Listener...")
+
+	// Do whatever you want in this for loop, it gets individual DNS packet structures from NATS
+	go func() {
+		for p := range dnsPacketChannel {
+			fmt.Println(p)
+		}
+	}()
+	go StartDnsPacketListener()
 
 	fmt.Println("** Opening the pcap handle...")
 	// Handle that acts as the connection to the source of pcap data
@@ -87,7 +101,7 @@ func getpcapHandle() *pcap.Handle {
 
 	if networkDeviceInterfaceName != "no.interface" {
 		fmt.Println("Online parsing initiating...")
-
+		myHandle, err = pcap.OpenLive(networkDeviceInterfaceName, 262144, true, pcap.BlockForever)
 	} else if pcapFilePath != "no.pcap" {
 		fmt.Println("Offline parsing initiating...")
 		fmt.Println("Reading from:", pcapFilePath)
