@@ -12,85 +12,106 @@ import (
 )
 
 var pcapFilePath string
-var clientMACAddress string
+var NATSSwitch string
 var networkDeviceInterfaceName string
 var incomingPacketChannelSize int
-var globalWaitGroup sync.WaitGroup
+var mainThreadWaitGroup sync.WaitGroup
 var conf FlowConfig
-var dnsPacketChannel chan DnsPacket
+var DNSPacketChannelFromNATS chan DnsPacket
+var packetChannelFromPcapHandle chan gopacket.Packet
 
 func init() {
 	flag.StringVar(&pcapFilePath, "f", "no.pcap", "For offline parsing, provide filepath to .pcap file to be parsed")
-	flag.StringVar(&clientMACAddress, "MAC", "", "For offline parsing, provide the Client MAC address to distinguish client->server flow")
-	flag.StringVar(&networkDeviceInterfaceName, "i", "no.interface", "For online parsing (has priority over offline), provide the Network Device Interface's name")
+	flag.StringVar(&networkDeviceInterfaceName, "i", "no.interface", "Declare an network interface for online parsing")
+	flag.StringVar(&NATSSwitch, "NATS", "off", "Provide 'on' to indicate that packets are to be received from NATS")
 	flag.String("config", "flow.toml", "Configuration file")
-	incomingPacketChannelSize = 10000
+
+	initRedisDB()
 }
 
 func main() {
 	flag.Parse()
 	conf = GetConfig()
-	dnsPacketChannel = make(chan DnsPacket, 10000)
+	fmt.Println("########### INITIATING FLOW ############")
 
-	fmt.Println("########### INITIATING ############")
+	/*
+		Determine whether we're sourcing DNS packets from a pcap file or from the NATS server
 
-	fmt.Println("** Intialising DNS Packet NATS Listener...")
+		If DNS packets are coming from NATS, initiate channel to collect NATS packets and the workers too
+	*/
+	if NATSSwitch == "on" {
+		fmt.Println("!! DNS PacketSource: NATS")
+		DNSPacketChannelFromNATS = make(chan DnsPacket, 10000)
 
-	// Do whatever you want in this for loop, it gets individual DNS packet structures from NATS
-	go func() {
-		for p := range dnsPacketChannel {
-			fmt.Println(p)
-		}
-	}()
-	go StartDnsPacketListener()
+		// Producers
+		fmt.Println("** Initialising DNS Packet NATS Listener...")
+		go startDNSPacketListenerForNATSMessages(DNSPacketChannelFromNATS)
 
-	fmt.Println("** Opening the pcap handle...")
-	// Handle that acts as the connection to the source of pcap data
-	var pcapHandle *pcap.Handle = getpcapHandle()
-	defer pcapHandle.Close()
-	fmt.Println("Opening the pcap handle was successful!")
+		// Consumers - will perform DGA lookups
+		fmt.Println("* Created worker...")
+		go func() {
+			for p := range DNSPacketChannelFromNATS {
+				fmt.Println(p)
+			}
+		}()
+	} else {
+		fmt.Println("!! DNS PacketSource offline ")
 
-	// Before the parsing of packets begins, add starting flow functions the slice of packetFlowFunctions
-	fmt.Println("** Intialising starting flow functions...")
-	addFlowFunction(initDGALookupOnDNSResponsesFlowFunction())
-	addFlowFunction(initIPTraceFlowFunction())
-
-	fmt.Println("** Initiating packet flow from pcap handle...")
-	// Get the channel with packets
-	incomingPacketChannel := getPacketsChannelFromHandle(pcapHandle)
-
-	counter := 1
-	xTime := time.Now()
-	var totalTimeTaken time.Duration = 0
-	for packet := range incomingPacketChannel {
-		if counter%1000000 == 0 {
-			fmt.Println("Heartbeat: Parsed 1 000 000 packets...")
-			timeTakenForPackets := time.Now().Sub(xTime)
-			fmt.Println("Took: ", timeTakenForPackets)
-			averagex := timeTakenForPackets.Seconds() / float64(1000000)
-			fmt.Printf("Average time per packet: %.10f seconds\n", averagex)
-			xTime = time.Now()
-		}
-
-		startTime := time.Now()
-		for _, flowFunction := range packetFlowFunctions {
-			flowFunction(packet)
-		}
-		totalTimeTaken += time.Now().Sub(startTime)
-		counter++
+		// Add the flowFunction to parse for DNS Responses and perform DGA lookups
+		addFlowFunction(initDGALookupOnDNSResponsesFlowFunction())
 	}
 
+	fmt.Print("!! Opening the pcap handle...")
+	var pcapHandle *pcap.Handle = getpcapHandle()
+	defer pcapHandle.Close()
+	fmt.Println("Success")
+
+	fmt.Print("** Initialising packet flow from pcap handle...")
+	packetChannelFromPcapHandle = getPacketsChannelFromHandle(pcapHandle)
+	fmt.Println("Success")
+
+	fmt.Println("!! Adding flow functions to parse packets from pcapHandle...")
+	addFlowFunction(initIPTraceFlowFunction())
+	fmt.Println("@@ Finished")
+
+	fmt.Println("* Create worker...")
+	func() {
+		// Stats for recording average time spent on each packet
+		packetCounter := 1
+		timer := time.Now()
+
+		for packet := range packetChannelFromPcapHandle {
+			if packetCounter%1000000 == 0 {
+				fmt.Println("Heartbeat: Parsed 1 000 000 packets...")
+
+				timeTakenForPackets := time.Now().Sub(timer)
+				averageForMillionPackets := timeTakenForPackets.Seconds() / float64(1000000)
+
+				fmt.Println("Took: ", timeTakenForPackets)
+				fmt.Printf("Average time per packet: %.10f seconds\n", averageForMillionPackets)
+
+				timer = time.Now()
+			}
+
+			/*
+				Execute each flow function on packet
+				Flow functions will perform a check and on success perform an action
+			*/
+			for _, flowFunction := range packetFlowFunctions {
+				flowFunction(packet)
+			}
+
+			packetCounter++
+		}
+	}()
+
 	fmt.Println("Main thread waiting...")
-	globalWaitGroup.Wait()
+	mainThreadWaitGroup.Wait()
 
 	fmt.Println("Flushing writers...")
 	flushWriters()
 
 	fmt.Println("***FINISHED***")
-	fmt.Println("Number of packets parsed: ", counter)
-	fmt.Println("TotalTimeTaken: ", totalTimeTaken)
-	average := totalTimeTaken.Seconds() / float64(counter)
-	fmt.Printf("Therefore, average time spent on each packet: %.10f seconds\n", average)
 }
 
 // Depending on the command-line arguments provided by the user,
@@ -100,13 +121,10 @@ func getpcapHandle() *pcap.Handle {
 	var err error
 
 	if networkDeviceInterfaceName != "no.interface" {
-		fmt.Println("Online parsing initiating...")
+		fmt.Println("** Network Interface:", pcapFilePath)
 		myHandle, err = pcap.OpenLive(networkDeviceInterfaceName, 262144, true, pcap.BlockForever)
 	} else if pcapFilePath != "no.pcap" {
-		fmt.Println("Offline parsing initiating...")
-		fmt.Println("Reading from:", pcapFilePath)
-
-		// Open pcap file
+		fmt.Println("** Pcap file:", pcapFilePath)
 		myHandle, err = pcap.OpenOffline(pcapFilePath)
 	} else {
 		log.Fatal("Please provide an interface or pcap file")
@@ -123,11 +141,12 @@ func getpcapHandle() *pcap.Handle {
 func getPacketsChannelFromHandle(handle *pcap.Handle) chan gopacket.Packet {
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 
-	// Set NoCopy on - don't make copies of the Packets
-	// For speed as we don't want to alter the underlying copy
+	// Set NoCopy on - don't make copies of the Packets (speed)
+	fmt.Println("* Decoding option NoCopy: true")
 	packetSource.DecodeOptions.NoCopy = true
 
 	// Set Lazy off - load all layers (could not be needed)
+	fmt.Println("* Decoding option Lazy: false")
 	packetSource.DecodeOptions.Lazy = false
 
 	// Return the channel to the packet stream

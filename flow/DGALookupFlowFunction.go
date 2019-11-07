@@ -16,12 +16,7 @@ var readTransaction *memdb.Txn
 // Must return a flow function that will perform the checks required on incoming packets
 // and look to delegate work accordingly
 func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
-	fmt.Println("# Initialising flow function DGALookup")
-
-	// initialize the DGA database for lookups
-	initRedisDB()
-
-	fmt.Println("FlowFunction DGALookupFlowFunction intialised")
+	fmt.Println("## Initialising flow function DGALookup")
 	return packetFlowFunction(DGALookupOnDNSResponsesFlowFunction)
 }
 
@@ -33,8 +28,6 @@ If found, then the function will create add a new flow function to trace the ip 
 and create a new channel as well for the new flow function to direct packets too
 */
 func DGALookupOnDNSResponsesFlowFunction(packet gopacket.Packet) {
-	// Flow Functions should be organized into the two sections:
-
 	// 1. Packet Checking
 	// Attempt to retrieve a copy of the DNS layer in the given packet
 	dnsLayer := packet.Layer(layers.LayerTypeDNS)

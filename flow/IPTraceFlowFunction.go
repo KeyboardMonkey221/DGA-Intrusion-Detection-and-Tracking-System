@@ -26,10 +26,8 @@ type IPTracingPcapFile struct {
 var IPTraceHashmap map[string]*IPTracingPcapFile
 
 func initIPTraceFlowFunction() packetFlowFunction {
-	fmt.Println("# Initialising flow function IPTrace")
+	fmt.Println("IPTrace flow function...")
 	IPTraceHashmap = make(map[string]*IPTracingPcapFile)
-
-	fmt.Println("FlowFunction IPTraceFlowFunction intialised")
 	return packetFlowFunction(IPTraceFlowFunction)
 }
 
@@ -60,7 +58,7 @@ func IPTraceFlowFunction(packet gopacket.Packet) {
 	}
 
 	// Create worker to write packet to file
-	globalWaitGroup.Add(1)
+	mainThreadWaitGroup.Add(1)
 	go func() {
 		IPTraceStruct.mutex.Lock()
 		err := IPTraceStruct.pcapWriter.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
@@ -71,7 +69,7 @@ func IPTraceFlowFunction(packet gopacket.Packet) {
 
 		IPTraceStruct.mutex.Unlock()
 
-		globalWaitGroup.Done()
+		mainThreadWaitGroup.Done()
 	}()
 
 }
