@@ -127,6 +127,8 @@ func getpcapHandle() *pcap.Handle {
 		fmt.Println("** Pcap file:", pcapFilePath)
 		myHandle, err = pcap.OpenOffline(pcapFilePath)
 	} else {
+		fmt.Println(networkDeviceInterfaceName)
+
 		log.Fatal("Please provide an interface or pcap file")
 	}
 
