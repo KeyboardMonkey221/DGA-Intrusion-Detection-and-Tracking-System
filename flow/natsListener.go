@@ -26,6 +26,7 @@ func startDNSPacketListenerForNATSMessages() {
 		if err != nil {
 			fmt.Println("Error decoding protobuf", err)
 		}
+
 		fmt.Println("Received packet attributes for", len(packetBundle.Packets), "DNS Packets")
 		for _, packet := range packetBundle.Packets {
 			DNSPacketChannelFromNATS <- *packet
