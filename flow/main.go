@@ -45,11 +45,11 @@ func main() {
 
 		// Producers
 		fmt.Println("** Initialising DNS Packet NATS Listener...")
-		go startDNSPacketListenerForNATSMessages(DNSPacketChannelFromNATS)
+		go startDNSPacketListenerForNATSMessages()
 
 		// Consumers - will perform DGA lookups
 		fmt.Println("* Created worker...")
-		go func() {
+		func() {
 			for p := range DNSPacketChannelFromNATS {
 				fmt.Println(p)
 			}

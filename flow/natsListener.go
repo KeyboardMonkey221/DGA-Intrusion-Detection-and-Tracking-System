@@ -13,7 +13,7 @@ const dnsSubject = "dns_packets"
 Creates a go routine that parses NATS messages from the configured NATSUrl,
 decodes them and then parses them into the DNSPacketChannel
 */
-func startDNSPacketListenerForNATSMessages(channel chan DnsPacket) {
+func startDNSPacketListenerForNATSMessages() {
 	nc, err := nats.Connect(conf.Nats.NatsURL)
 	if err != nil {
 		fmt.Println(err)
@@ -28,7 +28,7 @@ func startDNSPacketListenerForNATSMessages(channel chan DnsPacket) {
 		}
 		fmt.Println("Received packet attributes for", len(packetBundle.Packets), "DNS Packets")
 		for _, packet := range packetBundle.Packets {
-			channel <- *packet
+			DNSPacketChannelFromNATS <- *packet
 		}
 	})
 
