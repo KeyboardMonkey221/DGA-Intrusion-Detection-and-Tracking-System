@@ -49,8 +49,9 @@ func main() {
 		// Consumers - will perform DGA lookups
 		fmt.Println("* Created worker for NATS...")
 		go func() {
-			for p := range DNSPacketChannelFromNATS {
-				fmt.Println(p)
+			for DNSPacket := range DNSPacketChannelFromNATS {
+				answersRecords := DNSPacket.GetDnsInfo().GetAnswers()
+				fmt.Println(answersRecords)
 			}
 		}()
 
