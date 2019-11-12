@@ -25,14 +25,13 @@ func init() {
 	flag.StringVar(&networkDeviceInterfaceName, "i", "no.interface", "Declare an network interface for online parsing")
 	flag.StringVar(&NATSSwitch, "NATS", "off", "Provide 'on' to indicate that packets are to be received from NATS")
 	flag.String("config", "flow.toml", "Configuration file")
-
-	initRedisDB()
 }
 
 func main() {
 	flag.Parse()
 	conf = GetConfig()
 	fmt.Println("########### INITIATING FLOW ############")
+	go initRedisDB()
 
 	/*
 		Determine whether we're sourcing DNS packets from a pcap file or from the NATS server
@@ -48,12 +47,14 @@ func main() {
 		go startDNSPacketListenerForNATSMessages()
 
 		// Consumers - will perform DGA lookups
-		fmt.Println("* Created worker...")
-		func() {
+		fmt.Println("* Created worker for NATS...")
+		go func() {
 			for p := range DNSPacketChannelFromNATS {
-				fmt.Println(p)
+				fmt.Println(p.SrcIp)
 			}
 		}()
+
+		fmt.Println("WOW")
 	} else {
 		fmt.Println("!! DNS PacketSource offline ")
 
@@ -74,7 +75,7 @@ func main() {
 	addFlowFunction(initIPTraceFlowFunction())
 	fmt.Println("@@ Finished")
 
-	fmt.Println("* Create worker...")
+	fmt.Println("* Create worker Flow Functions...")
 	func() {
 		// Stats for recording average time spent on each packet
 		packetCounter := 1

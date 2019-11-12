@@ -2,21 +2,28 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"log"
 
 	"github.com/go-redis/redis"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
-	"github.com/hashicorp/go-memdb"
 )
 
-// Create a variable to store a readtransaction pointer to query the db
-var readTransaction *memdb.Txn
+var domainNameFile *os.File
 
 // Sets up the context before a flowFunction
 // Must return a flow function that will perform the checks required on incoming packets
 // and look to delegate work accordingly
 func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
 	fmt.Println("## Initialising flow function DGALookup")
+
+	var err error
+	domainNameFile, err = os.Create("domainNamesFound.txt");
+	if err != nil {
+		log.Fatal("failed to create file")
+	}
+
 	return packetFlowFunction(DGALookupOnDNSResponsesFlowFunction)
 }
 
@@ -68,6 +75,7 @@ func handleStandardResponse(dnsData *layers.DNS) {
 				addIPToTrace(answer.IP.String())
 			}
 		} else {
+			domainNameFile.Write([]byte(domainName + "\n"))
 			/*
 				fmt.Println("- Lookup failed, but use anyway for the sake of testing")
 				for _, answer := range dnsData.Answers {
