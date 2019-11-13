@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
+	"github.com/go-redis/redis"
 )
 
 var pcapFilePath string
@@ -50,12 +51,30 @@ func main() {
 		fmt.Println("* Created worker for NATS...")
 		go func() {
 			for DNSPacket := range DNSPacketChannelFromNATS {
-				answersRecords := DNSPacket.GetDnsInfo().GetAnswers()
-				fmt.Println(answersRecords)
+				DNSPacketInfo := DNSPacket.GetDnsInfo()
+
+				// Only focus on DNS packets with answers (responses)
+				answersRecords := DNSPacketInfo.Answers
+				if len(answersRecords) != 0 {
+					// iterating with range didn't work
+					for i := 0; i < len(answersRecords); i++ {
+						domainName := string(answersRecords[i].GetName())
+						/*
+						Should be swtiched to NATS - better performance (later)
+						*/
+						returnVal := DGARedisClient.Get(domainName)
+						if returnVal.Err() != redis.Nil {
+							fmt.Println("Malware Found: ", domainName)
+							// Goal is nats will be the messaging service
+							// For the moment, can just use restful directly to SDN controller, though the goal will be to use NATS to
+							// msg the SDN controller
+
+							// therefore, create a restful server, make sure that the restful requests are correct
+						}
+					}
+				}
 			}
 		}()
-
-		fmt.Println("WOW")
 	} else {
 		fmt.Println("!! DNS PacketSource offline ")
 

@@ -62,8 +62,8 @@ func DGALookupOnDNSResponsesFlowFunction(packet gopacket.Packet) {
 
 func handleStandardResponse(dnsData *layers.DNS) {
 	// Cycle through all the domainNames questioned, checking for DGA domain names using in-mem db
-	for _, DNSquestion := range dnsData.Questions {
-		domainName := string(DNSquestion.Name)
+	for _, DNSanswer := range dnsData.Answers {
+		domainName := string(DNSanswer.Name)
 
 		// in-mem lookup w/ redis
 		returnVal := DGARedisClient.Get(domainName)
@@ -76,16 +76,6 @@ func handleStandardResponse(dnsData *layers.DNS) {
 			}
 		} else {
 			domainNameFile.Write([]byte(domainName + "\n"))
-			/*
-				fmt.Println("- Lookup failed, but use anyway for the sake of testing")
-				for _, answer := range dnsData.Answers {
-					if answer.IP == nil {
-						continue
-					}
-
-					addIPToTrace(answer.IP.String())
-				}
-			*/
 		}
 	}
 }
