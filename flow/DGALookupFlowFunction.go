@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	"github.com/go-redis/redis"
 	"github.com/google/gopacket"
@@ -19,7 +19,7 @@ func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
 	fmt.Println("## Initialising flow function DGALookup")
 
 	var err error
-	domainNameFile, err = os.Create("domainNamesFound.txt");
+	domainNameFile, err = os.Create("domainNamesFound.txt")
 	if err != nil {
 		log.Fatal("failed to create file")
 	}
@@ -64,6 +64,10 @@ func handleStandardResponse(dnsData *layers.DNS) {
 	// Cycle through all the domainNames questioned, checking for DGA domain names using in-mem db
 	for _, DNSquestion := range dnsData.Questions {
 		domainName := string(DNSquestion.Name)
+
+		/*
+			max 3 labels
+		*/
 
 		// in-mem lookup w/ redis
 		returnVal := DGARedisClient.Get(domainName)
