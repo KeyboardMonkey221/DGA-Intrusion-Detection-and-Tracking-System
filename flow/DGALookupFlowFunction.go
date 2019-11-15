@@ -13,7 +13,7 @@ import (
 )
 
 var domainNameFile *os.File
-var domainNameCSVWriter *Writer
+var domainNameCSVWriter *csv.Writer
 
 // Sets up the context before a flowFunction
 // Must return a flow function that will perform the checks required on incoming packets
@@ -28,7 +28,7 @@ func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
 	}
 
 	domainNameCSVWriter = csv.NewWriter(domainNameFile)
-	defer writer.Flush()
+	defer domainNameCSVWriter.Flush()
 
 	return packetFlowFunction(DGALookupOnDNSResponsesFlowFunction)
 }
@@ -92,9 +92,10 @@ func handleStandardResponse(dnsData *layers.DNS) {
 func writeToCSV(domainName string, successful string) {
 	// Construct rows
 	s := make([]string, 3)
-	s[0] = time.Now()
+	s[0] = time.Now().String()
 	s[1] = domainName
 	s[2] = successful
 
-	domainNameCSVWriter.write(s)
+	// write to file
+	domainNameCSVWriter.Write(s)
 }
