@@ -14,9 +14,7 @@ Creates a go routine that parses NATS messages from the configured NATSUrl,
 decodes them and then parses them into the DNSPacketChannel
 */
 func startDNSPacketListenerForNATSMessages() {
-	fmt.Println("Enter")
 	nc, err := nats.Connect(conf.Nats.NatsURL)
-	fmt.Println("HERE")
 	if err != nil {
 		fmt.Println(err)
 		panic("Error connecting to NATS Server")
