@@ -1,26 +1,26 @@
 package main
 
 import (
-	"encoding/csv"
+
 	"fmt"
-	"log"
-	"os"
-	"time"
+
 
 	"github.com/go-redis/redis"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 )
 
+/*
 var domainNameFile *os.File
 var domainNameCSVWriter *csv.Writer
-
+*/
 // Sets up the context before a flowFunction
 // Must return a flow function that will perform the checks required on incoming packets
 // and look to delegate work accordingly
 func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
 	fmt.Println("## Initialising flow function DGALookup")
 
+	/*
 	var err error
 	domainNameFile, err = os.Create("domainNamesFound.csv")
 	if err != nil {
@@ -29,7 +29,7 @@ func initDGALookupOnDNSResponsesFlowFunction() packetFlowFunction {
 
 	domainNameCSVWriter = csv.NewWriter(domainNameFile)
 	defer domainNameCSVWriter.Flush()
-
+	*/
 	return packetFlowFunction(DGALookupOnDNSResponsesFlowFunction)
 }
 
@@ -79,23 +79,26 @@ func handleStandardResponse(dnsData *layers.DNS) {
 		returnVal := DGARedisClient.Get(domainName)
 		if returnVal.Err() != redis.Nil {
 			fmt.Println("Malware Found: ", domainName)
-			writeToCSV(domainName, "Yes")
-			for _, answer := range dnsData.Answers {
-				// get ip address
+			
+			for _, answer := range dnsData.Answers {	
+				writeToCSV(domainName, "Yes", answer.IP.String())
 			}
+			
 		} else {
-			writeToCSV(domainName, "No")
+			writeToCSV(domainName, "No", "")
 		}
 	}
 }
-
-func writeToCSV(domainName string, successful string) {
+/*
+func writeToCSV(domainName string, successful string, ipAddress string) {
 	// Construct rows
 	s := make([]string, 3)
 	s[0] = time.Now().String()
 	s[1] = domainName
 	s[2] = successful
+	s[3] = ipAddress
 
 	// write to file
 	domainNameCSVWriter.Write(s)
 }
+*/
