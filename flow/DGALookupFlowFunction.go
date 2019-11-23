@@ -79,22 +79,23 @@ func handleStandardResponse(dnsData *layers.DNS) {
 		returnVal := DGARedisClient.Get(domainName)
 		if returnVal.Err() != redis.Nil {
 			fmt.Println("Malware Found: ", domainName)
-			writeToCSV(domainName, "Yes")
 			for _, answer := range dnsData.Answers {
 				// get ip address
+				writeToCSV(domainName, "Yes", answer.IP.String())
 			}
 		} else {
-			writeToCSV(domainName, "No")
+			writeToCSV(domainName, "No", "")
 		}
 	}
 }
 
-func writeToCSV(domainName string, successful string) {
+func writeToCSV(domainName string, isSuccess string, ipAddress string) {
 	// Construct rows
-	s := make([]string, 3)
+	s := make([]string, 4)
 	s[0] = time.Now().String()
 	s[1] = domainName
-	s[2] = successful
+	s[2] = isSuccess
+	s[3] = ipAddress
 
 	// write to file
 	domainNameCSVWriter.Write(s)
