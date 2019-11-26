@@ -1,130 +1,63 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"sync"
 	"time"
-
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/pcap"
-	"github.com/go-redis/redis"
 )
 
+// ! Exported variables
+// * Program parameters
 var pcapFilePath string
 var NATSSwitch string
 var networkDeviceInterfaceName string
-var incomingPacketChannelSize int
+
+// * Configuration variables
+var NATSconfig FlowConfig
+
+// * WaitGroup for the main thread
 var mainThreadWaitGroup sync.WaitGroup
-var conf FlowConfig
-var DNSPacketChannelFromNATS chan DnsPacket
-var packetChannelFromPcapHandle chan gopacket.Packet
+
+// * Temporary variables for recording data in CSV file
+// TODO update to live analysis
+var domainNameFile *os.File
+var domainNameCSVWriter *csv.Writer
 
 func init() {
+	// Extracting program parameters passed in from command-line
 	flag.StringVar(&pcapFilePath, "f", "no.pcap", "For offline parsing, provide filepath to .pcap file to be parsed")
 	flag.StringVar(&networkDeviceInterfaceName, "i", "no.interface", "Declare an network interface for online parsing")
 	flag.StringVar(&NATSSwitch, "NATS", "off", "Provide 'on' to indicate that packets are to be received from NATS")
-	flag.String("config", "flow.toml", "Configuration file")
+	flag.String("NATSconfig", "NATSconfig.toml", "Configuration file for NATS")
 }
 
 func main() {
-	flag.Parse()
-	conf = GetConfig()
 	fmt.Println("########### INITIATING FLOW ############")
+	fmt.Println("## Parsing flags...")
+	flag.Parse()
+
+	fmt.Println("## Configuring NATS connection...")
+	NATSconfig = GetNATSConfig()
+
+	fmt.Println("## Parsing YAML for API requests to SDN controller...")
+	SDNControllerParseYamlConfig("SDNControllerAPIconfig.yaml")
+
+	// Connecting to redis DB
 	go initRedisDB()
 
-	/*
-		Determine whether we're sourcing DNS packets from a pcap file or from the NATS server
+	// TODO Sets up data to written to csv - to be removed
+	setUpCSVOutputFile()
 
-		If DNS packets are coming from NATS, initiate channel to collect NATS packets and the workers too
-	*/
-	if NATSSwitch == "on" {
-		fmt.Println("!! DNS PacketSource: NATS")
-		DNSPacketChannelFromNATS = make(chan DnsPacket, 10000)
-
-		// Producers
-		fmt.Println("** Initialising DNS Packet NATS Listener...")
-		go startDNSPacketListenerForNATSMessages()
-
-		// Consumers - will perform DGA lookups
-		fmt.Println("* Created worker for NATS...")
-		go func() {
-			for DNSPacket := range DNSPacketChannelFromNATS {
-				DNSPacketInfo := DNSPacket.GetDnsInfo()
-
-				// Only focus on DNS packets with answers (responses)
-				answersRecords := DNSPacketInfo.Answers
-				if len(answersRecords) != 0 {
-					// iterating with range didn't work
-					for i := 0; i < len(answersRecords); i++ {
-						domainName := string(answersRecords[i].GetName())
-						/*
-						Should be swtiched to NATS - better performance (later)
-						*/
-						returnVal := DGARedisClient.Get(domainName)
-						if returnVal.Err() != redis.Nil {
-							fmt.Println("Malware Found: ", domainName)
-							// Goal is nats will be the messaging service
-							// For the moment, can just use restful directly to SDN controller, though the goal will be to use NATS to
-							// msg the SDN controller
-
-							// therefore, create a restful server, make sure that the restful requests are correct
-						}
-					}
-				}
-			}
-		}()
-	} else {
-		fmt.Println("!! DNS PacketSource offline ")
-
-		// Add the flowFunction to parse for DNS Responses and perform DGA lookups
-		addFlowFunction(initDGALookupOnDNSResponsesFlowFunction())
-	}
-
-	fmt.Print("!! Opening the pcap handle...")
-	var pcapHandle *pcap.Handle = getpcapHandle()
-	defer pcapHandle.Close()
-	fmt.Println("Success")
-
-	fmt.Print("** Initialising packet flow from pcap handle...")
-	packetChannelFromPcapHandle = getPacketsChannelFromHandle(pcapHandle)
-	fmt.Println("Success")
-
-	fmt.Println("!! Adding flow functions to parse packets from pcapHandle...")
-	addFlowFunction(initIPTraceFlowFunction())
-	fmt.Println("@@ Finished")
-
-	fmt.Println("* Create worker Flow Functions...")
-	func() {
-		// Stats for recording average time spent on each packet
-		packetCounter := 1
-		timer := time.Now()
-
-		for packet := range packetChannelFromPcapHandle {
-			if packetCounter%1000000 == 0 {
-				fmt.Println("Heartbeat: Parsed 1 000 000 packets...")
-
-				timeTakenForPackets := time.Now().Sub(timer)
-				averageForMillionPackets := timeTakenForPackets.Seconds() / float64(1000000)
-
-				fmt.Println("Took: ", timeTakenForPackets)
-				fmt.Printf("Average time per packet: %.10f seconds\n", averageForMillionPackets)
-
-				timer = time.Now()
-			}
-
-			/*
-				Execute each flow function on packet
-				Flow functions will perform a check and on success perform an action
-			*/
-			for _, flowFunction := range packetFlowFunctions {
-				flowFunction(packet)
-			}
-
-			packetCounter++
-		}
-	}()
+	fmt.Println("## Initialise the Channels with packet flow...")
+	// Moved into functions for the sake of simplifying main func's flow
+	// * Includes setting up workers
+	initialiseChannelsForNATS()
+	initialiseChannelsForNetworkInterfaceOrPcap()
 
 	fmt.Println("Main thread waiting...")
 	mainThreadWaitGroup.Wait()
@@ -135,41 +68,43 @@ func main() {
 	fmt.Println("***FINISHED***")
 }
 
-// Depending on the command-line arguments provided by the user,
-// either return a *pcap.handle for online or offline parsing
-func getpcapHandle() *pcap.Handle {
-	var myHandle *pcap.Handle = nil
-	var err error
+// TODO to be removed
+func writeToCSV(domainName string, successful string, ipAddress string) {
+	// Construct rows
+	s := make([]string, 4)
+	s[0] = strconv.FormatInt(time.Now().Unix(), 10)
+	s[1] = domainName
+	s[2] = successful
+	s[3] = ipAddress
 
-	if networkDeviceInterfaceName != "no.interface" {
-		fmt.Println("** Network Interface:", pcapFilePath)
-		myHandle, err = pcap.OpenLive(networkDeviceInterfaceName, 262144, true, pcap.BlockForever)
-	} else if pcapFilePath != "no.pcap" {
-		fmt.Println("** Pcap file:", pcapFilePath)
-		myHandle, err = pcap.OpenOffline(pcapFilePath)
-	} else {
-		log.Fatal("Please provide an interface or pcap file")
-	}
-
-	// Before returning handle, check for errors
-	if err != nil {
-		log.Fatal("Error creating Packet Handle: ", err)
-	}
-
-	return myHandle
+	// write to file
+	domainNameCSVWriter.Write(s)
 }
 
-func getPacketsChannelFromHandle(handle *pcap.Handle) chan gopacket.Packet {
-	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+// TODO to be removed
+func setUpCSVOutputFile() {
+	baseFileName := "domainNamesFound"
+	i := 0
 
-	// Set NoCopy on - don't make copies of the Packets (speed)
-	fmt.Println("* Decoding option NoCopy: true")
-	packetSource.DecodeOptions.NoCopy = true
+	for {
+		potentialFilePath := baseFileName + "_" + strconv.Itoa(i) + ".csv"
+		_, err := os.Stat(potentialFilePath)
+		if err == nil {
+			// File name already exists, don't overwrite
+			i++
+			continue
+		} else {
+			// Create file - it doesn't exist
+			domainNameFile, err = os.Create(potentialFilePath)
+			if err != nil {
+				log.Fatal("failed to create file: ", potentialFilePath)
+			}
 
-	// Set Lazy off - load all layers (could not be needed)
-	fmt.Println("* Decoding option Lazy: false")
-	packetSource.DecodeOptions.Lazy = false
+			domainNameCSVWriter = csv.NewWriter(domainNameFile)
+			defer domainNameCSVWriter.Flush()
 
-	// Return the channel to the packet stream
-	return packetSource.Packets()
+			// end loop
+			break
+		}
+	}
 }

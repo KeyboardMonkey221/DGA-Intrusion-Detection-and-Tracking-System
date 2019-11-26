@@ -1,0 +1,23 @@
+dpid: 2
+hard_timeout: 0
+idle_timeout: 300
+table_id: 0
+priority: 48000
+details:
+    serverIPtoHost:
+        cookie_base: 1
+        matches:
+            in_port: 1
+            eth_type: 0x800 #IPv4 traffic only at the moment
+            ipv4_src: serverIP
+        actions:
+            out_port: 5
+
+    hostIPtoServer:
+        cookie_base: 3000
+        matches:
+            in_port: 2
+            eth_type: 0x800 #IPv4 traffic only at the moment
+            ipv4_dst: serverIP
+        actions:
+            out_port: 6

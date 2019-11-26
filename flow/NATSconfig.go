@@ -16,7 +16,7 @@ type Nats struct {
 	NatsURL string `toml:"nats_url"`
 }
 
-func GetConfig() FlowConfig {
+func GetNATSConfig() FlowConfig {
 	var conf FlowConfig
 
 	filePath := getPath()
@@ -28,5 +28,5 @@ func GetConfig() FlowConfig {
 }
 
 func getPath() string {
-	return flag.Lookup("config").Value.(flag.Getter).Get().(string)
+	return flag.Lookup("NATSconfig").Value.(flag.Getter).Get().(string)
 }
