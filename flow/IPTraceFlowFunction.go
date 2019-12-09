@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/binary"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"sync"
 
@@ -98,13 +96,6 @@ func addIPToTrace(ipAddress string) {
 		// insert into hashmap
 		IPTraceHashmap[ipAddress] = &myStruct
 	}
-}
-
-func ip2int(ip net.IP) uint32 {
-	if len(ip) == 16 {
-		return binary.BigEndian.Uint32(ip[12:16])
-	}
-	return binary.BigEndian.Uint32(ip)
 }
 
 func flushWriters() {

@@ -106,7 +106,7 @@ type SDNControllerPostdstIPJSON struct {
 }
 
 
-func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON, SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON) {
+func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON, SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON) {
 	// SRC json object
 	src1JSONStruct := SDNControllerPostsrcIPJSON{
 		Dpid:        parsedYamlStruct.Dpid,
@@ -120,6 +120,8 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	src1JSONStruct.Match.InPort = parsedYamlStruct.Details.SrcIPInfo.Matches.InPort
 	src1JSONStruct.Match.EthType = parsedYamlStruct.Details.SrcIPInfo.Matches.EthType
 	src1JSONStruct.Match.IPv4Src = srcIP
+	src1JSONStruct.IdleTimeout = TTL
+
 	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
 	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:7})
 
@@ -136,9 +138,10 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	dst1JSONStruct.Match.InPort = parsedYamlStruct.Details.DstIPInfo.Matches.InPort
 	dst1JSONStruct.Match.EthType = parsedYamlStruct.Details.DstIPInfo.Matches.EthType
 	dst1JSONStruct.Match.IPv4Dst = dstIP
+	dst1JSONStruct.IdleTimeout = TTL
 
-        dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
-        dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
+	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
+	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
 
 //	dstJSONStruct.Actions.ActionType = "OUTPUT"
 //	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
@@ -155,6 +158,8 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	src2JSONStruct.Match.InPort = 9
 	src2JSONStruct.Match.EthType = parsedYamlStruct.Details.SrcIPInfo.Matches.EthType
 	src2JSONStruct.Match.IPv4Src = srcIP
+	src2JSONStruct.IdleTimeout = TTL
+
 	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
 	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:7})
 
@@ -171,9 +176,10 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	dst2JSONStruct.Match.InPort = 10
 	dst2JSONStruct.Match.EthType = parsedYamlStruct.Details.DstIPInfo.Matches.EthType
 	dst2JSONStruct.Match.IPv4Dst = dstIP
+	dst2JSONStruct.IdleTimeout = TTL
 
-        dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
-        dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
+	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
+	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
 
 //	dstJSONStruct.Actions.ActionType = "OUTPUT"
 //	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
@@ -184,8 +190,8 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 }
 
 // required to send two post requests
-func sendPOSTRequestToSDNController(srcIP string, dstIP string) {
-	src1JSONStruct, dst1JSONStruct, src2JSONStruct, dst2JSONStruct := createJSONPostObjects(srcIP, dstIP)
+func sendPOSTRequestToSDNController(srcIP string, dstIP string, TTL int) {
+	src1JSONStruct, dst1JSONStruct, src2JSONStruct, dst2JSONStruct := createJSONPostObjects(srcIP, dstIP, TTL)
 
 	src1JSON, err := json.Marshal(src1JSONStruct)
 	if err != nil {

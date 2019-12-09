@@ -69,14 +69,15 @@ func main() {
 }
 
 // TODO to be removed - should be replaced with live analysis
-func writeToCSV(domainName string, successful string, ipAddress string, malwareFamily string) {
+func writeToCSV(domainName string, dstIP string, successful string, ipAddress string, malwareFamily string) {
 	// Construct rows
-	s := make([]string, 5)
+	s := make([]string, 6)
 	s[0] = strconv.FormatInt(time.Now().Unix(), 10)
-	s[1] = domainName
-	s[2] = successful
-	s[3] = ipAddress
-	s[4] = malwareFamily
+	s[1] = dstIP
+	s[2] = domainName
+	s[3] = successful
+	s[4] = ipAddress
+	s[5] = malwareFamily
 
 	// write to file
 	domainNameCSVWriter.Write(s)
