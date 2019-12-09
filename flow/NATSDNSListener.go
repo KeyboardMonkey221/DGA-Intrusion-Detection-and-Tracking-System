@@ -52,9 +52,8 @@ func initialiseChannelsForNATS() {
 		go startDNSPacketListenerForNATSMessages()
 
 		fmt.Println("* Created worker for NATS...")
+		mainThreadWaitGroup.Add(1)
 		go func() {
-			mainThreadWaitGroup.Add(1)
-
 			for DNSPacket := range DNSPacketChannelFromNATS {
 				DNSPacketInfo := DNSPacket.GetDnsInfo()
 
@@ -70,17 +69,21 @@ func initialiseChannelsForNATS() {
 						// ? A NATS based lookup could be faster than redis
 						returnVal := DGARedisClient.Get(domainName)
 
+						// Check if domainName is present in DB
 						if returnVal.Err() != redis.Nil {
 							commandCentreIP := string(answersRecords[i].GetByteData())
 							fmt.Println("Malware Found: ", domainName)
 							fmt.Println("-> ", commandCentreIP)
 
+							// Get malware family
+							malwareFamily, _ := returnVal.Result()
+
 							// Should be a go routine as we don't want to wait for a response
 							go sendPOSTRequestToSDNController(commandCentreIP, commandCentreIP)
 
-							writeToCSV(domainName, "Yes", string(answersRecords[i].GetByteData()))
+							writeToCSV(domainName, "Yes", commandCentreIP, malwareFamily)
 						} else {
-							writeToCSV(domainName, "No", "")
+							writeToCSV(domainName, "No", "", "")
 						}
 					}
 				}

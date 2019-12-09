@@ -79,11 +79,11 @@ func handleStandardResponse(dnsData *layers.DNS) {
 			fmt.Println("Malware Found: ", domainName)
 
 			for _, answer := range dnsData.Answers {
-				writeToCSV(domainName, "Yes", answer.IP.String())
+				writeToCSV(domainName, "Yes", answer.IP.String(), "")
 			}
 
 		} else {
-			writeToCSV(domainName, "No", "")
+			writeToCSV(domainName, "No", "", "")
 		}
 	}
 }
