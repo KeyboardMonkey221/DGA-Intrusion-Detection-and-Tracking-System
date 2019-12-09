@@ -65,6 +65,7 @@ func initialiseChannelsForNATS() {
 					for i := 0; i < len(answersRecords); i++ {
 						// Extract the domain name from the record
 						domainName := string(answersRecords[i].GetName())
+						TTL := int(answersRecords[i].Ttl)
 
 						// Perform a DNS lookup
 						// ? A NATS based lookup could be faster than redis
@@ -76,11 +77,11 @@ func initialiseChannelsForNATS() {
 							fmt.Println("-> ", commandCentreIP)
 
 							// Should be a go routine as we don't want to wait for a response
-							go sendPOSTRequestToSDNController(commandCentreIP, commandCentreIP)
+							go sendPOSTRequestToSDNController(commandCentreIP, commandCentreIP, TTL)
 
-							writeToCSV(domainName, "Yes", string(answersRecords[i].GetByteData()))
+							writeToCSV(domainName, DNSPacket.GetDstIp(), "Yes", string(answersRecords[i].GetByteData()))
 						} else {
-							writeToCSV(domainName, "No", "")
+							writeToCSV(domainName, DNSPacket.GetDstIp(), "No", "")
 						}
 					}
 				}

@@ -48,7 +48,7 @@ func main() {
 	SDNControllerParseYamlConfig("SDNControllerAPIconfig.yaml")
 
 	// Connecting to redis DB
-	go initRedisDB()
+	// !go initRedisDB()
 
 	// TODO Sets up data to written to csv - to be removed
 	setUpCSVOutputFile()
@@ -69,13 +69,14 @@ func main() {
 }
 
 // TODO to be removed
-func writeToCSV(domainName string, successful string, ipAddress string) {
+func writeToCSV(domainName string, dstIP string, successful string, ipAddress string) {
 	// Construct rows
 	s := make([]string, 4)
 	s[0] = strconv.FormatInt(time.Now().Unix(), 10)
-	s[1] = domainName
-	s[2] = successful
-	s[3] = ipAddress
+	s[1] = dstIP
+	s[2] = domainName
+	s[3] = successful
+	s[4] = ipAddress
 
 	// write to file
 	domainNameCSVWriter.Write(s)

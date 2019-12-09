@@ -84,6 +84,7 @@ func initialiseChannelsForNetworkInterfaceOrPcap() {
 	// * Initialise FlowFunctions
 	fmt.Println("Initialising flowFunctions")
 	// eg addFlowFunction(initIPTraceFlowFunction())
+	addFlowFunction(initIPFlowAnalysisFlowFunction())
 
 	fmt.Println("* Create worker for flow functions")
 	func() {

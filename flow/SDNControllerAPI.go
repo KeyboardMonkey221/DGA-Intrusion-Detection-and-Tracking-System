@@ -106,7 +106,7 @@ type SDNControllerPostdstIPJSON struct {
 	} `json:"actions"`
 }
 
-func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON) {
+func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON) {
 	// SRC json object
 	srcJSONStruct := SDNControllerPostsrcIPJSON{
 		Dpid:        parsedYamlStruct.Dpid,
@@ -120,6 +120,7 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	srcJSONStruct.Match.InPort = parsedYamlStruct.Details.SrcIPInfo.Matches.InPort
 	srcJSONStruct.Match.EthType = parsedYamlStruct.Details.SrcIPInfo.Matches.EthType
 	srcJSONStruct.Match.IPv4Src = srcIP
+	srcJSONStruct.IdleTimeout = TTL
 
 	srcJSONStruct.Actions.ActionType = "OUTPUT"
 	srcJSONStruct.Actions.Port = parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort
@@ -137,6 +138,7 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 	dstJSONStruct.Match.InPort = parsedYamlStruct.Details.DstIPInfo.Matches.InPort
 	dstJSONStruct.Match.EthType = parsedYamlStruct.Details.DstIPInfo.Matches.EthType
 	dstJSONStruct.Match.IPv4Dst = dstIP
+	dstJSONStruct.IdleTimeout = TTL
 
 	dstJSONStruct.Actions.ActionType = "OUTPUT"
 	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
@@ -146,8 +148,8 @@ func createJSONPostObjects(srcIP string, dstIP string) (SDNControllerPostsrcIPJS
 }
 
 // required to send two post requests
-func sendPOSTRequestToSDNController(srcIP string, dstIP string) {
-	srcJSONStruct, dstJSONStruct := createJSONPostObjects(srcIP, dstIP)
+func sendPOSTRequestToSDNController(srcIP string, dstIP string, TTL int) {
+	srcJSONStruct, dstJSONStruct := createJSONPostObjects(srcIP, dstIP, TTL)
 
 	srcJSON, err := json.Marshal(srcJSONStruct)
 	if err != nil {
