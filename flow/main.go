@@ -24,7 +24,6 @@ var NATSconfig FlowConfig
 var mainThreadWaitGroup sync.WaitGroup
 
 // * Temporary variables for recording data in CSV file
-// TODO update to live analysis
 var domainNameFile *os.File
 var domainNameCSVWriter *csv.Writer
 
@@ -50,7 +49,6 @@ func main() {
 	// Connecting to redis DB
 	go initRedisDB()
 
-	// TODO Sets up data to written to csv - to be removed
 	setUpCSVOutputFile()
 
 	fmt.Println("## Initialise the Channels with packet flow...")
@@ -68,7 +66,7 @@ func main() {
 	fmt.Println("***FINISHED***")
 }
 
-// TODO to be removed - should be replaced with live analysis
+
 func writeToCSV(domainName string, dstIP string, successful string, ipAddress string, malwareFamily string) {
 	// Construct rows
 	s := make([]string, 6)
@@ -83,7 +81,6 @@ func writeToCSV(domainName string, dstIP string, successful string, ipAddress st
 	domainNameCSVWriter.Write(s)
 }
 
-// TODO to be removed - should be replaced with live analysis
 func setUpCSVOutputFile() {
 	baseFileName := "domainNamesFound"
 	i := 0

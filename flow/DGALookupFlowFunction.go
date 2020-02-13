@@ -8,6 +8,8 @@ import (
 	"github.com/google/gopacket/layers"
 )
 
+//var numMalware int
+
 /*
 var domainNameFile *os.File
 var domainNameCSVWriter *csv.Writer

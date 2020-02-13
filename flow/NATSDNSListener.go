@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/golang/protobuf/proto"
@@ -14,6 +15,8 @@ const dnsSubject = "dns_packets"
 // ? Future development: Could be receiving different NATS messages of different types
 // ? Hence, should be a hashmap of type, channel type
 var DNSPacketChannelFromNATS chan DnsPacket
+
+var numberOfPackets int
 
 /*
 Creates a go routine that parses NATS messages from the configured NATSUrl,
@@ -44,6 +47,10 @@ func startDNSPacketListenerForNATSMessages() {
 }
 
 func initialiseChannelsForNATS() {
+	numberOfPackets = 0
+	startTime := time.Now()
+	timer, _ := time.ParseDuration("10s")
+
 	fmt.Println("# NATS packet flow set to be: ", NATSSwitch)
 	if NATSSwitch == "on" {
 		DNSPacketChannelFromNATS = make(chan DnsPacket, 10000)
@@ -55,6 +62,13 @@ func initialiseChannelsForNATS() {
 		mainThreadWaitGroup.Add(1)
 		go func() {
 			for DNSPacket := range DNSPacketChannelFromNATS {
+				numberOfPackets++
+				if time.Since(startTime) >= timer {
+					fmt.Println("Number of DNS packets in 10s: ", numberOfPackets)
+					startTime = time.Now()
+					numberOfPackets = 0
+				}
+
 				DNSPacketInfo := DNSPacket.GetDnsInfo()
 
 				// Only focus on DNS packets with answers (responses)
@@ -84,6 +98,7 @@ func initialiseChannelsForNATS() {
 
 							writeToCSV(domainName, DNSPacket.GetDstIp(), "Yes", commandCentreIP, malwareFamily)
 						} else {
+							//domainName = string(answersRecords[i].GetName())
 							writeToCSV(domainName, DNSPacket.GetDstIp(), "No", "", "")
 						}
 					}
