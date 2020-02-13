@@ -88,8 +88,6 @@ func initIPFlowAnalysisFlowFunction() packetFlowFunction {
 }
 
 func IPFlowAnalysisFlowFunction(packet gopacket.Packet) {
-	// ! this following code shouldn't exist here and should be done elsewhere - pressed for time
-
 	// Store the data in packetData struct
 	var packetData PacketData
 	packetData.Length, packetData.Timestamp = uint32(packet.Metadata().Length), packet.Metadata().Timestamp

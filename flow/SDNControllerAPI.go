@@ -69,9 +69,9 @@ func SDNControllerParseYamlConfig(yamlFilePath string) {
 // Note: that marshalling yaml requires to attributes to start with capital letter
 // ! Also note you can't pull directly from yaml file as the data needs to be reorganised
 type SDNControllerPostsrcIPJSON struct {
-	Dpid        int `json:"dpid"`
-//	Cookie      int `json:"cookie"`
-//	CookieMask  int `json:"cookie_mask"`
+	Dpid int `json:"dpid"`
+	//	Cookie      int `json:"cookie"`
+	//	CookieMask  int `json:"cookie_mask"`
 	TableID     int `json:"table_id"`
 	IdleTimeout int `json:"idle_timeout"`
 	HardTimeout int `json:"hard_timeout"`
@@ -85,14 +85,14 @@ type SDNControllerPostsrcIPJSON struct {
 }
 
 type ActionItem struct {
-        ActionType string `json:"type"`
-        Port       int    `json:"port"`
+	ActionType string `json:"type"`
+	Port       int    `json:"port"`
 }
 
 type SDNControllerPostdstIPJSON struct {
-	Dpid        int `json:"dpid"`
-//	Cookie      int `json:"cookie"`
-//	CookieMask  int `json:"cookie_mask"`
+	Dpid int `json:"dpid"`
+	//	Cookie      int `json:"cookie"`
+	//	CookieMask  int `json:"cookie_mask"`
 	TableID     int `json:"table_id"`
 	IdleTimeout int `json:"idle_timeout"`
 	HardTimeout int `json:"hard_timeout"`
@@ -102,16 +102,15 @@ type SDNControllerPostdstIPJSON struct {
 		EthType int    `json:"eth_type"`
 		IPv4Dst string `json:"ipv4_dst"`
 	} `json:"match"`
-        Actions [] ActionItem `json:"actions"`
+	Actions []ActionItem `json:"actions"`
 }
-
 
 func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON, SDNControllerPostsrcIPJSON, SDNControllerPostdstIPJSON) {
 	// SRC json object
 	src1JSONStruct := SDNControllerPostsrcIPJSON{
-		Dpid:        parsedYamlStruct.Dpid,
-//		Cookie:      parsedYamlStruct.Details.SrcIPInfo.CookieBase,
-//		CookieMask:  1,
+		Dpid: parsedYamlStruct.Dpid,
+		//		Cookie:      parsedYamlStruct.Details.SrcIPInfo.CookieBase,
+		//		CookieMask:  1,
 		TableID:     parsedYamlStruct.TableID,
 		IdleTimeout: parsedYamlStruct.IdleTimeout,
 		HardTimeout: parsedYamlStruct.HardTimeout,
@@ -122,14 +121,14 @@ func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPo
 	src1JSONStruct.Match.IPv4Src = srcIP
 	src1JSONStruct.IdleTimeout = TTL
 
-	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
-	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:7})
+	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
+	src1JSONStruct.Actions = append(src1JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: 7})
 
 	// DST json object
 	dst1JSONStruct := SDNControllerPostdstIPJSON{
-		Dpid:        parsedYamlStruct.Dpid,
-//		Cookie:      parsedYamlStruct.Details.DstIPInfo.CookieBase,
-//		CookieMask:  1,
+		Dpid: parsedYamlStruct.Dpid,
+		//		Cookie:      parsedYamlStruct.Details.DstIPInfo.CookieBase,
+		//		CookieMask:  1,
 		TableID:     parsedYamlStruct.TableID,
 		IdleTimeout: parsedYamlStruct.IdleTimeout,
 		HardTimeout: parsedYamlStruct.HardTimeout,
@@ -140,16 +139,16 @@ func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPo
 	dst1JSONStruct.Match.IPv4Dst = dstIP
 	dst1JSONStruct.IdleTimeout = TTL
 
-	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
-	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
+	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
+	dst1JSONStruct.Actions = append(dst1JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: 8})
 
-//	dstJSONStruct.Actions.ActionType = "OUTPUT"
-//	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
+	//	dstJSONStruct.Actions.ActionType = "OUTPUT"
+	//	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
 
 	src2JSONStruct := SDNControllerPostsrcIPJSON{
-		Dpid:        parsedYamlStruct.Dpid,
-//		Cookie:      parsedYamlStruct.Details.SrcIPInfo.CookieBase,
-//		CookieMask:  1,
+		Dpid: parsedYamlStruct.Dpid,
+		//		Cookie:      parsedYamlStruct.Details.SrcIPInfo.CookieBase,
+		//		CookieMask:  1,
 		TableID:     parsedYamlStruct.TableID,
 		IdleTimeout: parsedYamlStruct.IdleTimeout,
 		HardTimeout: parsedYamlStruct.HardTimeout,
@@ -160,14 +159,14 @@ func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPo
 	src2JSONStruct.Match.IPv4Src = srcIP
 	src2JSONStruct.IdleTimeout = TTL
 
-	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
-	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:7})
+	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: parsedYamlStruct.Details.SrcIPInfo.Actions.OutPort})
+	src2JSONStruct.Actions = append(src2JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: 7})
 
 	// DST json object
 	dst2JSONStruct := SDNControllerPostdstIPJSON{
-		Dpid:        parsedYamlStruct.Dpid,
-//		Cookie:      parsedYamlStruct.Details.DstIPInfo.CookieBase,
-//		CookieMask:  1,
+		Dpid: parsedYamlStruct.Dpid,
+		//		Cookie:      parsedYamlStruct.Details.DstIPInfo.CookieBase,
+		//		CookieMask:  1,
 		TableID:     parsedYamlStruct.TableID,
 		IdleTimeout: parsedYamlStruct.IdleTimeout,
 		HardTimeout: parsedYamlStruct.HardTimeout,
@@ -178,12 +177,11 @@ func createJSONPostObjects(srcIP string, dstIP string, TTL int) (SDNControllerPo
 	dst2JSONStruct.Match.IPv4Dst = dstIP
 	dst2JSONStruct.IdleTimeout = TTL
 
-	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
-	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType:"OUTPUT",Port:8})
+	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: parsedYamlStruct.Details.DstIPInfo.Actions.OutPort})
+	dst2JSONStruct.Actions = append(dst2JSONStruct.Actions, ActionItem{ActionType: "OUTPUT", Port: 8})
 
-//	dstJSONStruct.Actions.ActionType = "OUTPUT"
-//	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
-
+	//	dstJSONStruct.Actions.ActionType = "OUTPUT"
+	//	dstJSONStruct.Actions.Port = parsedYamlStruct.Details.DstIPInfo.Actions.OutPort
 
 	return src1JSONStruct, dst1JSONStruct, src2JSONStruct, dst2JSONStruct
 
@@ -214,8 +212,7 @@ func sendPOSTRequestToSDNController(srcIP string, dstIP string, TTL int) {
 	}
 
 	// Format post requests
-	targetUrl := "http://129.94.5.57:8080/DGAHost/serverIP/add"
-//        targetUrl := "http://localhost:8080/DGAHost/serverIP/add"
+	targetUrl := "http://localhost:8080/DGAHost/serverIP/add"
 	reqSrc1, err := http.NewRequest("POST", targetUrl, bytes.NewReader(src1JSON))
 	reqSrc1.Header.Set("Content-Type", "application/json")
 
@@ -227,7 +224,6 @@ func sendPOSTRequestToSDNController(srcIP string, dstIP string, TTL int) {
 
 	reqDst2, err := http.NewRequest("POST", targetUrl, bytes.NewReader(dst2JSON))
 	reqDst2.Header.Set("Content-Type", "application/json")
-
 
 	client := &http.Client{}
 	responseSrc, err := client.Do(reqSrc1)
@@ -242,19 +238,17 @@ func sendPOSTRequestToSDNController(srcIP string, dstIP string, TTL int) {
 	}
 	defer responseDst.Body.Close()
 
-        client2 := &http.Client{}
-        responseSrc2, err2 := client.Do(reqSrc2)
-        if err2 != nil {
-                panic(err2)
-        }
-        defer responseSrc2.Body.Close()
+	client2 := &http.Client{}
+	responseSrc2, err2 := client.Do(reqSrc2)
+	if err2 != nil {
+		panic(err2)
+	}
+	defer responseSrc2.Body.Close()
 
-        responseDst2, err2 := client2.Do(reqDst2)
-        if err2 != nil {
-                panic(err2)
-        }
-        defer responseDst2.Body.Close()
-
+	responseDst2, err2 := client2.Do(reqDst2)
+	if err2 != nil {
+		panic(err2)
+	}
+	defer responseDst2.Body.Close()
 
 }
-

@@ -12,8 +12,6 @@ import (
 const dnsSubject = "dns_packets"
 
 // * Channels handling Packet data
-// ? Future development: Could be receiving different NATS messages of different types
-// ? Hence, should be a hashmap of type, channel type
 var DNSPacketChannelFromNATS chan DnsPacket
 
 var numberOfPackets int

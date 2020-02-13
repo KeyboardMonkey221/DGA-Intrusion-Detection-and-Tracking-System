@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-// ! Exported variables
 // * Program parameters
 var pcapFilePath string
 var NATSSwitch string
@@ -65,7 +64,6 @@ func main() {
 
 	fmt.Println("***FINISHED***")
 }
-
 
 func writeToCSV(domainName string, dstIP string, successful string, ipAddress string, malwareFamily string) {
 	// Construct rows

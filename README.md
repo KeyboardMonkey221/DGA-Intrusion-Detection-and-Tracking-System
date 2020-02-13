@@ -1,3 +1,5 @@
+# Note: Post project analysis can be found in the .pdf contained within this repo
+
 # COMP9301 Cyber Security Project Proposal
 ### z5184991 Lance Young
 
